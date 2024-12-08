@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: game-container
+spec:
+  containers:
+  - name: game
+    image: game-image
+    ports:
+    - containerPort: 8080
