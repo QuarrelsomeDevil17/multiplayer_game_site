@@ -1,6 +1,12 @@
 server:
   port: 8080
+grpc:
+  port: 50051
 games:
   - chess
   - checkers
   - tictactoe
+docker:
+  enable: true
+kubernetes:
+  enable: false

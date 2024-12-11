@@ -2,9 +2,49 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: game-container
+  labels:
+    app: game
 spec:
   containers:
-  - name: game
-    image: game-image
-    ports:
-    - containerPort: 8080
+    - name: game
+      image: game-image:latest # Replace with your actual image name
+      ports:
+        - containerPort: 8080
+      env:
+        - name: ENVIRONMENT
+          value: "production" # Example: Set your environment to production, you can adjust this
+        - name: GAME_MODE
+          value: "multiplayer" # Example: Game mode could be multiplayer or other settings
+      resources:
+        requests:
+          memory: "512Mi"  # Requesting 512Mi of memory
+          cpu: "500m"      # Requesting 0.5 CPU cores
+        limits:
+          memory: "1Gi"    # Limiting to 1Gi of memory
+          cpu: "1"         # Limiting to 1 CPU core
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 10
+      readinessProbe:
+        httpGet:
+          path: /health
+          port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: game-service
+spec:
+  selector:
+    app: game
+  ports:
+    - protocol: TCP
+      port: 80          # The port exposed externally
+      targetPort: 8080   # The port inside the container
+  type: LoadBalancer    # Use LoadBalancer to expose externally, change to ClusterIP if internal-only
